@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ZHEP Radar - painel de prospec��o inteligente" />
+  <title>ZHEP Radar</title>
+  <style>
+    :root { --ink:#e9e7e7; --muted:#98969a; --line:#2d2a2d; --bg:#100f10; --panel:#191719; --panel-2:#211d20; --red:#e9414e; --red-2:#ff6a72; --green:#57c88e; --yellow:#e4b04c; --blue:#87a9ff; }
+    * { box-sizing:border-box; } body { margin:0; min-width:320px; background:radial-gradient(1000px 700px at 80% -15%,#311419 0%,transparent 53%),var(--bg); color:var(--ink); font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    button,input,select { font:inherit; } button { cursor:pointer; }
+    .app { min-height:100vh; display:grid; grid-template-columns:238px 1fr; }
+    aside { padding:25px 16px; border-right:1px solid var(--line); background:rgba(13,12,13,.72); display:flex; flex-direction:column; gap:29px; }
+    .brand { display:flex; align-items:center; gap:11px; padding:0 9px; letter-spacing:.08em; font-weight:800; font-size:15px; }
+    .brandmark { width:29px; height:29px; border-radius:8px; background:linear-gradient(135deg,var(--red),#922631); position:relative; box-shadow:0 0 24px rgba(233,65,78,.36); }
+    .brandmark:after { content:""; position:absolute; inset:6px; border:2px solid #fff; border-left:0; transform:skewX(-17deg); }
+    .brand small { display:block; font-size:10px; color:var(--muted); letter-spacing:.16em; margin-top:2px; }
+    nav { display:grid; gap:5px; } .nav-title { color:#747176; font-size:10px; letter-spacing:.14em; padding:0 11px 8px; }
+    .nav { width:100%; border:0; background:transparent; color:#bab6bb; border-radius:8px; padding:11px 12px; text-align:left; display:flex; gap:11px; align-items:center; font-size:13px; }
+    .nav:hover,.nav.active { background:rgba(233,65,78,.11); color:#fff; } .nav.active:before { content:""; width:4px; height:17px; margin-left:-12px; border-radius:0 3px 3px 0; background:var(--red); }
+    .dot { width:7px; height:7px; border-radius:50%; background:var(--red); } .nav .count { margin-left:auto; font-size:11px; color:var(--muted); }
+    .sidefoot { margin-top:auto; padding:12px; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.018); color:var(--muted); font-size:11px; line-height:1.5; }
+    .sidefoot strong { display:block; color:var(--ink); font-size:12px; margin-bottom:2px; }
+    main { padding:32px clamp(18px,4vw,56px); max-width:1600px; width:100%; margin:auto; overflow:hidden; }
+    .top { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; } h1 { margin:0; font-size:26px; letter-spacing:-.045em; } .subtitle { margin:7px 0 0; color:var(--muted); font-size:13px; }
+    .actions { display:flex; gap:10px; align-items:center; } .btn { border:1px solid var(--line); padding:10px 13px; border-radius:8px; color:var(--ink); background:#252126; font-size:12px; font-weight:650; } .btn:hover { border-color:#565056; }
+    .btn.primary { background:var(--red); border-color:var(--red); color:white; box-shadow:0 8px 22px rgba(233,65,78,.20); }.btn.primary:hover { background:var(--red-2); }
+    .campaign { margin-top:29px; border:1px solid var(--line); border-radius:13px; background:linear-gradient(100deg,rgba(255,255,255,.035),rgba(255,255,255,.012)); padding:17px 18px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+    .campaign-meta { display:flex; flex:1; min-width:230px; align-items:center; gap:12px; } .pill { font-size:10px; letter-spacing:.08em; text-transform:uppercase; padding:5px 7px; border-radius:5px; color:#f7b0b5; background:rgba(233,65,78,.13); border:1px solid rgba(233,65,78,.22); } .campaign-name { font-weight:750; font-size:14px; } .campaign-detail { color:var(--muted); font-size:12px; margin-top:3px; }
+    .field { display:grid; gap:5px; } label { font-size:10px; letter-spacing:.09em; text-transform:uppercase; color:#89858b; } select,input { color:var(--ink); background:#141214; border:1px solid #373237; outline:0; border-radius:7px; padding:9px 10px; font-size:12px; } select:focus,input:focus { border-color:var(--red); }
+    .metrics { margin-top:22px; display:grid; grid-template-columns:repeat(4,minmax(130px,1fr)); gap:12px; } .metric { border:1px solid var(--line); padding:16px; border-radius:11px; background:rgba(25,23,25,.75); } .metric-label { color:var(--muted); font-size:11px; } .metric-value { margin-top:9px; font-size:25px; letter-spacing:-.05em; font-weight:750; }.metric-delta { margin-top:7px; color:var(--green); font-size:11px; }.metric-delta.neutral { color:var(--muted); }
+    .workspace { margin-top:23px; display:grid; grid-template-columns:minmax(520px,1.55fr) minmax(280px,.8fr); gap:14px; }.panel { border:1px solid var(--line); border-radius:12px; background:rgba(25,23,25,.82); overflow:hidden; }.panel-head { padding:16px 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); }.panel-title { font-size:13px; font-weight:750; }.panel-subtitle { color:var(--muted); font-size:11px; margin-top:3px; }.filter { color:var(--muted); font-size:11px; border:0; background:transparent; }
+    .lead-list { display:grid; }.lead { position:relative; padding:15px 18px; display:grid; grid-template-columns:minmax(145px,1.3fr) minmax(105px,.8fr) minmax(140px,1fr) 76px; gap:12px; align-items:center; border-bottom:1px solid rgba(55,50,55,.76); cursor:pointer; }.lead:last-child{border-bottom:0}.lead:hover,.lead.selected { background:rgba(233,65,78,.055); }.lead.selected:before { content:""; position:absolute; left:0; height:34px; width:3px; background:var(--red); border-radius:0 2px 2px 0; }.company { font-size:13px; font-weight:700; }.loc { color:var(--muted); font-size:11px; margin-top:4px; }.tag { display:inline-flex; color:#d8d4d8; background:#29252a; padding:4px 6px; border-radius:5px; font-size:10px; }.reason { color:#beb9be; font-size:11px; line-height:1.4; }.score { text-align:right; font-size:20px; font-weight:750; letter-spacing:-.05em; }.score small { display:block; font-size:9px; color:var(--muted); letter-spacing:.07em; text-transform:uppercase; margin-top:2px; }
+    .details { padding:18px; }.detail-company { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }.detail-name { font-size:17px; font-weight:750; letter-spacing:-.035em; }.status { font-size:10px; padding:5px 6px; color:#e7d8a7; background:rgba(228,176,76,.12); border-radius:5px; }.detail-location { color:var(--muted); font-size:12px; margin-top:4px; }.scoregrid { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin:21px 0 16px; }.scorecard { padding:11px; background:#211e21; border-radius:8px; }.scorecard small { display:block; color:var(--muted); font-size:10px; }.scorecard strong { font-size:22px; letter-spacing:-.05em; margin-top:3px; display:block; }.meter { margin-top:7px; height:4px; border-radius:3px; background:#393339; overflow:hidden; }.meter i { display:block; height:100%; background:var(--red); }.meter.system i { background:var(--blue); }.section-label { margin:17px 0 8px; color:#89858b; font-size:10px; text-transform:uppercase; letter-spacing:.1em; }.evidence { display:grid; gap:7px; }.evidence div { font-size:11px; color:#d4d0d3; line-height:1.4; padding-left:13px; position:relative; }.evidence div:before { content:""; width:5px; height:5px; position:absolute; top:5px; left:0; border-radius:50%; background:var(--red); }.message { background:#171517; border:1px solid #302b30; border-radius:8px; padding:11px; color:#c4bec5; font-size:11px; line-height:1.55; }.detail-actions { display:flex; gap:8px; margin-top:14px; }.detail-actions .btn { padding:9px 10px; flex:1; }
+    .insights { margin-top:14px; display:grid; grid-template-columns:1.55fr .8fr; gap:14px; }.chartbody { padding:16px 18px 18px; }.bars { height:126px; display:flex; align-items:end; gap:10px; padding-top:16px; border-bottom:1px solid #363136; }.bar { position:relative; flex:1; min-width:20px; background:linear-gradient(180deg,var(--red-2),#8d2730); border-radius:4px 4px 0 0; }.bar:after { content:attr(data-day); position:absolute; top:calc(100% + 7px); left:50%; transform:translateX(-50%); color:#78747a; font-size:9px; }.bar:hover { filter:brightness(1.2); }.funnel { padding:14px 18px; display:grid; gap:12px; }.funnelrow { display:grid; grid-template-columns:76px 1fr 22px; align-items:center; gap:8px; font-size:11px; }.funnelrow label { color:#bab5bb; font-size:11px; text-transform:none; letter-spacing:0; }.track { height:7px; background:#353035; border-radius:4px; overflow:hidden; }.track i { height:100%; display:block; background:var(--red); border-radius:4px; }.funnelrow b { text-align:right; font-size:11px; }
+    .modal { position:fixed; inset:0; background:rgba(5,4,5,.73); display:none; align-items:center; justify-content:center; padding:18px; z-index:5; }.modal.open { display:flex; }.modal-card { width:min(530px,100%); background:#1a171a; border:1px solid #4a4149; border-radius:14px; padding:22px; box-shadow:0 22px 80px rgba(0,0,0,.55); }.modal-card h2 { margin:0; font-size:19px; letter-spacing:-.035em; }.modal-card p { color:var(--muted); font-size:12px; margin:7px 0 18px; }.formgrid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }.formgrid .wide { grid-column:1/-1; }.modal-actions { margin-top:19px; display:flex; justify-content:flex-end; gap:9px; }
+    .toast { position:fixed; right:22px; bottom:22px; background:#252126; color:#ece8ec; border:1px solid #4a4149; border-radius:8px; padding:12px 14px; font-size:12px; transform:translateY(90px); opacity:0; transition:.25s; z-index:7; }.toast.show { transform:translateY(0); opacity:1; }
+    @media(max-width:1050px){.workspace,.insights{grid-template-columns:1fr}.details{min-height:250px}} @media(max-width:760px){.app{grid-template-columns:1fr} aside{display:none}main{padding:24px 16px}.top{display:grid}.actions{justify-content:flex-start;flex-wrap:wrap}.metrics{grid-template-columns:1fr 1fr}.campaign{align-items:flex-end}.lead{grid-template-columns:1fr 72px}.lead .tag,.lead .reason{display:none}.workspace{grid-template-columns:minmax(0,1fr)}.formgrid{grid-template-columns:1fr}.formgrid .wide{grid-column:auto}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand"><span class="brandmark"></span><span>ZHEP<small>RADAR COMERCIAL</small></span></div>
+      <nav>
+        <div class="nav-title">OPERA��O</div>
+        <button class="nav active"><span class="dot"></span>Vis�o geral</button>
+        <button class="nav">Campanhas <span class="count">03</span></button>
+        <button class="nav">Fila de leads <span class="count">28</span></button>
+        <button class="nav">Conversas <span class="count">04</span></button>
+        <button class="nav">Propostas</button>
+      </nav>
+      <nav>
+        <div class="nav-title">INTELIG�NCIA</div>
+        <button class="nav">Regras de pontua��o</button>
+        <button class="nav">Modelos de abordagem</button>
+        <button class="nav">Lista de bloqueio</button>
+      </nav>
+      <div class="sidefoot"><strong>Modo de demonstra��o</strong>Dados fict�cios. Nenhuma mensagem ser� enviada por este painel.</div>
+    </aside>
+    <main>
+      <div class="top">
+        <div><h1>Radar de oportunidades</h1><p class="subtitle">Encontrar a empresa certa � s� o come�o. A proposta certa fecha o ciclo.</p></div>
+        <div class="actions"><button class="btn" id="analyzeBtn">? Atualizar an�lise</button><button class="btn primary" id="newCampaign">+ Nova campanha</button></div>
+      </div>
+      <section class="campaign">
+        <div class="campaign-meta"><span class="pill">Em execu��o</span><div><div class="campaign-name" id="campaignName">Oficinas e auto centers - Itaja�</div><div class="campaign-detail" id="campaignDetail">Raio de 20 km � Oferta: site comercial com capta��o</div></div></div>
+        <div class="field"><label for="segment">Nicho</label><select id="segment"><option>Oficinas e auto centers</option><option>Cl�nicas e est�tica</option><option>Imobili�rias</option><option>Lojas locais</option></select></div>
+        <div class="field"><label for="city">Cidade</label><select id="city"><option>Itaja�</option><option>Feira de Santana</option><option>Salvador</option><option>Lauro de Freitas</option></select></div>
+        <div class="field"><label for="daily">Limite di�rio</label><select id="daily"><option>10 leads</option><option selected>15 leads</option><option>20 leads</option></select></div>
+      </section>
+      <section class="metrics">
+        <div class="metric"><div class="metric-label">Leads encontrados</div><div class="metric-value">28</div><div class="metric-delta">+8 nesta semana</div></div>
+        <div class="metric"><div class="metric-label">Alta prioridade</div><div class="metric-value" id="priorityMetric">11</div><div class="metric-delta">= 75 de potencial</div></div>
+        <div class="metric"><div class="metric-label">Abordagens aprovadas</div><div class="metric-value" id="approvedMetric">7</div><div class="metric-delta neutral">Aguardando envio</div></div>
+        <div class="metric"><div class="metric-label">Respostas</div><div class="metric-value">4</div><div class="metric-delta">14,3% de retorno</div></div>
+      </section>
+      <section class="workspace">
+        <div class="panel"><div class="panel-head"><div><div class="panel-title">Fila de recomenda��o</div><div class="panel-subtitle">A IA s� usa evid�ncias identificadas para sugerir uma abordagem.</div></div><button class="filter">Prioridade ?</button></div><div class="lead-list" id="leadList"></div></div>
+        <div class="panel"><div class="panel-head"><div><div class="panel-title">Dossi� do lead</div><div class="panel-subtitle">Decida com base na evid�ncia, n�o em suposi��o.</div></div></div><div class="details" id="details"></div></div>
+      </section>
+      <section class="insights">
+        <div class="panel"><div class="panel-head"><div><div class="panel-title">Leads qualificados por dia</div><div class="panel-subtitle">Campanha atual � �ltimos 7 dias</div></div><span class="tag">28 no per�odo</span></div><div class="chartbody"><div class="bars"><div class="bar" style="height:32%" data-day="Seg"></div><div class="bar" style="height:45%" data-day="Ter"></div><div class="bar" style="height:25%" data-day="Qua"></div><div class="bar" style="height:72%" data-day="Qui"></div><div class="bar" style="height:53%" data-day="Sex"></div><div class="bar" style="height:34%" data-day="S�b"></div><div class="bar" style="height:86%" data-day="Hoje"></div></div></div></div>
+        <div class="panel"><div class="panel-head"><div><div class="panel-title">Funil da campanha</div><div class="panel-subtitle">Resultados de demonstra��o</div></div></div><div class="funnel"><div class="funnelrow"><label>Encontrados</label><div class="track"><i style="width:100%"></i></div><b>28</b></div><div class="funnelrow"><label>Qualificados</label><div class="track"><i style="width:61%"></i></div><b>17</b></div><div class="funnelrow"><label>Aprovados</label><div class="track"><i style="width:25%"></i></div><b>7</b></div><div class="funnelrow"><label>Responderam</label><div class="track"><i style="width:14%"></i></div><b>4</b></div></div></div>
+      </section>
+    </main>
+  </div>
+  <div class="modal" id="modal"><div class="modal-card"><h2>Criar campanha</h2><p>Defina o recorte. O Radar usar� os crit�rios para montar a fila de oportunidades.</p><form id="campaignForm"><div class="formgrid"><div class="wide field"><label for="campaignInput">Nome da campanha</label><input id="campaignInput" required placeholder="Ex.: Cl�nicas em Feira de Santana" /></div><div class="field"><label for="nicheInput">Nicho</label><input id="nicheInput" required placeholder="Ex.: Cl�nicas odontol�gicas" /></div><div class="field"><label for="locationInput">Cidade e raio</label><input id="locationInput" required placeholder="Ex.: Feira de Santana � 15 km" /></div><div class="wide field"><label for="offerInput">Oferta priorit�ria</label><select id="offerInput"><option>Site comercial com capta��o</option><option>Site com agendamento</option><option>Cat�logo e pedidos por WhatsApp</option><option>Sistema de gest�o personalizado</option></select></div></div><div class="modal-actions"><button type="button" class="btn" id="cancelModal">Cancelar</button><button class="btn primary" type="submit">Criar campanha</button></div></form></div></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    /* Conecta a interface inicial a uma API local persistente sem alterar o layout. */
+    (() => {
+      const api = async (path, options = {}) => {
+        const response = await fetch(path, { headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }, ...options });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'N�o foi poss�vel concluir a opera��o.');
+        return data;
+      };
+      async function syncLeads() {
+        const data = await api('/api/leads');
+        leads.splice(0, leads.length, ...data);
+        if (selected >= leads.length) selected = 0;
+        renderLeads(); renderDetails();
+        const approved = leads.filter(lead => lead.status === 'Aprovado').length;
+        document.querySelector('#approvedMetric').textContent = approved;
+        document.querySelector('#priorityMetric').textContent = leads.filter(lead => lead.score >= 75).length;
+      }
+      document.addEventListener('click', async event => {
+        const approve = event.target.closest('#approveBtn');
+        if (approve) {
+          event.preventDefault(); event.stopImmediatePropagation();
+          const lead = leads[selected];
+          try { await api(`/api/leads/${lead.id}`, { method: 'PATCH', body: JSON.stringify({ status: 'Aprovado' }) }); await syncLeads(); toast('Abordagem aprovada e salva no Pipeline.'); }
+          catch (error) { toast(error.message); }
+          return;
+        }
+        if (event.target.closest('#analyzeBtn')) {
+          event.preventDefault(); event.stopImmediatePropagation();
+          try { await Promise.all(leads.map(lead => api(`/api/leads/${lead.id}/analyze`, { method: 'POST' }))); await syncLeads(); toast('Pontua��es recalculadas com base nas evid�ncias.'); }
+          catch (error) { toast(error.message); }
+        }
+      }, true);
+      document.addEventListener('submit', async event => {
+        if (event.target.id !== 'campaignForm') return;
+        event.preventDefault(); event.stopImmediatePropagation();
+        const name = document.querySelector('#campaignInput').value.trim();
+        const niche = document.querySelector('#nicheInput').value.trim();
+        const location = document.querySelector('#locationInput').value.trim();
+        const offer = document.querySelector('#offerInput').value;
+        try {
+          const campaign = await api('/api/campaigns', { method: 'POST', body: JSON.stringify({ name, niche, location, offer }) });
+          document.querySelector('#campaignName').textContent = campaign.name;
+          document.querySelector('#campaignDetail').textContent = `${campaign.location} � Oferta: ${campaign.offer}`;
+          document.querySelector('#modal').classList.remove('open'); event.target.reset(); toast(`Campanha "${campaign.name}" salva no Radar.`);
+        } catch (error) { toast(error.message); }
+      }, true);
+      window.addEventListener('load', () => syncLeads().catch(() => toast('Inicie o painel com "npm run dev" para salvar seus dados.')));
+    })();
+  </script>
+  <script>
+    const leads = [
+      {name:'Auto Prime Centro Automotivo', location:'Itaja� � 2,4 km', tag:'Site recomendado', site:91, system:46, score:91, reason:'Boa avalia��o local, mas sem site pr�prio.', status:'Novo', evidence:['Perfil do Google com 128 avalia��es e nota 4,8.','N�o foi identificado um dom�nio pr�prio no perfil.','Link principal direciona somente para rede social.'], message:'Ol�, pessoal da Auto Prime! Vi que voc�s t�m uma reputa��o muito forte no Google, com excelentes avalia��es. Percebi que ainda n�o existe uma p�gina pr�pria para transformar essa busca em pedidos de or�amento no WhatsApp. Pensei numa estrutura bem espec�fica para oficinas. Posso mostrar uma ideia r�pida? '},
+      {name:'Mec�nica Diesel Sul', location:'Itaja� � 5,8 km', tag:'Sistema avaliado', site:72, system:78, score:78, reason:'M�ltiplos servi�os e fluxo de or�amentos.', status:'Novo', evidence:['Site apresenta servi�os para frotas, diesel leve e manuten��o preventiva.','H� formul�rio gen�rico, sem rastreio do status de or�amento.','Servi�os e p�blico indicam opera��o com demanda recorrente.'], message:'Ol�, pessoal da Mec�nica Diesel Sul! Analisei os servi�os de voc�s e vi uma opera��o com v�rios tipos de or�amento e manuten��o recorrente. Existe uma oportunidade de organizar as solicita��es e acompanhamentos em um fluxo simples, al�m de melhorar a capta��o do site. Posso compartilhar uma ideia aplicada a esse cen�rio?'},
+      {name:'Garage 11 Est�tica Automotiva', location:'Itaja� � 7,1 km', tag:'Site recomendado', site:84, system:34, score:84, reason:'Instagram ativo sem funil de or�amento.', status:'Aprovado', evidence:['Instagram atualizado com servi�os e ve�culos finalizados.','Nenhuma p�gina de or�amento foi identificada no link da bio.','Atendimento depende de direct e WhatsApp sem triagem.'], message:'Ol�, pessoal da Garage 11! O trabalho de voc�s no Instagram est� muito bem apresentado. Vi uma oportunidade de levar esse padr�o para uma p�gina r�pida de or�amento, separando polimento, vitrifica��o e detalhamento antes do contato no WhatsApp. Posso enviar uma refer�ncia curta?'},
+      {name:'CarHub Servi�os', location:'Balne�rio Cambori� � 9,6 km', tag:'Site recomendado', site:76, system:59, score:76, reason:'Site existe, mas n�o oferece CTA claro.', status:'Novo', evidence:['Site ativo e acess�vel pelo celular.','N�o foi identificado bot�o de or�amento persistente.','Contato depende de formul�rio sem orienta��o de servi�o.'], message:'Ol�, pessoal da CarHub! Encontrei o site de voc�s ao pesquisar servi�os automotivos na regi�o. Ele j� apresenta bem a empresa, mas vi uma oportunidade clara de reduzir o caminho at� o or�amento no WhatsApp. Posso mostrar uma sugest�o objetiva?'},
+      {name:'Oficina Vila Norte', location:'Itaja� � 11,0 km', tag:'Site recomendado', site:68, system:28, score:68, reason:'Presen�a local sem p�gina pr�pria.', status:'Novo', evidence:['Ficha comercial encontrada em diret�rio local.','N�o h� website associado ao neg�cio.','Dados de atendimento e servi�os s�o p�blicos, mas dispersos.'], message:'Ol�, pessoal da Oficina Vila Norte! Encontrei o neg�cio de voc�s pesquisando oficinas na regi�o. Vi que os servi�os aparecem em canais diferentes, mas n�o encontrei uma p�gina pr�pria para facilitar or�amento e localiza��o. Posso apresentar uma ideia simples para centralizar isso?'},
+    ];
+    let selected = 0; let approved = 7;
+    const $ = s => document.querySelector(s);
+    const escapeHTML = s => s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[c]));
+    function renderLeads(){ $('#leadList').innerHTML = leads.map((lead,i)=>`<div class="lead ${i===selected?'selected':''}" data-index="${i}"><div><div class="company">${lead.name}</div><div class="loc">${lead.location}</div></div><div><span class="tag">${lead.tag}</span></div><div class="reason">${lead.reason}</div><div class="score">${lead.score}<small>potencial</small></div></div>`).join(''); document.querySelectorAll('.lead').forEach(el=>el.addEventListener('click',()=>{selected=Number(el.dataset.index);renderLeads();renderDetails()})); }
+    function renderDetails(){ const l=leads[selected]; $('#details').innerHTML=`<div class="detail-company"><div><div class="detail-name">${l.name}</div><div class="detail-location">${l.location}</div></div><span class="status">${l.status}</span></div><div class="scoregrid"><div class="scorecard"><small>Potencial para site</small><strong>${l.site}</strong><div class="meter"><i style="width:${l.site}%"></i></div></div><div class="scorecard"><small>Potencial para sistema</small><strong>${l.system}</strong><div class="meter system"><i style="width:${l.system}%"></i></div></div></div><div class="section-label">Evid�ncias encontradas</div><div class="evidence">${l.evidence.map(x=>`<div>${x}</div>`).join('')}</div><div class="section-label">Abordagem sugerida</div><div class="message">${l.message}</div><div class="detail-actions"><button class="btn" id="editBtn">Editar</button><button class="btn primary" id="approveBtn">${l.status==='Aprovado'?'Aprovado':'Aprovar abordagem'}</button></div>`; $('#approveBtn').addEventListener('click',()=>{if(l.status!=='Aprovado'){l.status='Aprovado';approved++;$('#approvedMetric').textContent=approved;renderLeads();renderDetails();toast('Abordagem aprovada. Ela ficar� pronta para revis�o e envio.')}else toast('Esta abordagem j� est� aprovada.')}); $('#editBtn').addEventListener('click',()=>toast('A edi��o de mensagem ser� conectada na pr�xima etapa do MVP.')); }
+    function toast(message){const t=$('#toast');t.textContent=message;t.classList.add('show');clearTimeout(window.t);window.t=setTimeout(()=>t.classList.remove('show'),3200)}
+    $('#newCampaign').addEventListener('click',()=>$('#modal').classList.add('open')); $('#cancelModal').addEventListener('click',()=>$('#modal').classList.remove('open')); $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')$('#modal').classList.remove('open')});
+    $('#campaignForm').addEventListener('submit',e=>{e.preventDefault();const name=$('#campaignInput').value.trim(),niche=$('#nicheInput').value.trim(),location=$('#locationInput').value.trim(),offer=$('#offerInput').value;$('#campaignName').textContent=name;$('#campaignDetail').textContent=`${location} � Oferta: ${offer}`;$('#modal').classList.remove('open');e.target.reset();toast(`Campanha "${name}" criada em modo de demonstra��o.`)});
+    $('#analyzeBtn').addEventListener('click',()=>toast('An�lise atualizada com os dados de demonstra��o.'));
+    document.querySelectorAll('.nav').forEach(btn=>btn.addEventListener('click',()=>{document.querySelector('.nav.active').classList.remove('active');btn.classList.add('active');toast('Esta se��o ser� conectada ao banco de dados na pr�xima etapa.')}));
+    renderLeads(); renderDetails();
+  </script>
+</body>
+</html>
+
