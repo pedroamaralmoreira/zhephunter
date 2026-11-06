@@ -24,3 +24,7 @@ Abra `http://localhost:5050`. Na primeira execu��o, os dados de demonstra�
 - `OLLAMA_HOST`: an�lise e abordagem local com Ollama.
 - WhatsApp Cloud API: respostas e automa��es permitidas.
 
+## Alertas no seu WhatsApp
+
+O painel j� possui o gatilho de alerta para voc� receber uma mensagem quando aprovar um lead. Para ativ�-lo, crie um arquivo `.env` com base em `.env.example`, conecte uma conta oficial WhatsApp Cloud API e crie o template `zhep_alerta` com uma vari�vel no corpo. Enquanto isso n�o estiver configurado, o bot�o de teste registra a tentativa no sistema, sem enviar nada.
+

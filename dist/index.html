@@ -41,14 +41,14 @@
 <body>
   <div class="app">
     <aside>
-      <div class="brand"><span class="brandmark"></span><span>ZHEP<small>RADAR COMERCIAL</small></span></div>
+      <div class="brand"><span class="brandmark"></span><span>ZHEP<small>HUNTER � OPERA��O</small></span></div>
       <nav>
         <div class="nav-title">OPERA��O</div>
-        <button class="nav active"><span class="dot"></span>Vis�o geral</button>
-        <button class="nav">Campanhas <span class="count">03</span></button>
-        <button class="nav">Fila de leads <span class="count">28</span></button>
+        <button class="nav active"><span class="dot"></span>Radar</button>
+        <button class="nav">Pipeline <span class="count">07</span></button>
+        <button class="nav">Studio <span class="count">04</span></button>
         <button class="nav">Conversas <span class="count">04</span></button>
-        <button class="nav">Propostas</button>
+        <button class="nav">Projetos</button>
       </nav>
       <nav>
         <div class="nav-title">INTELIG�NCIA</div>
@@ -56,12 +56,12 @@
         <button class="nav">Modelos de abordagem</button>
         <button class="nav">Lista de bloqueio</button>
       </nav>
-      <div class="sidefoot"><strong>Modo de demonstra��o</strong>Dados fict�cios. Nenhuma mensagem ser� enviada por este painel.</div>
+      <div class="sidefoot"><strong>N�cleo local ativo</strong>Radar, Pipeline e Studio em evolu��o. Alertas ficam prontos assim que o WhatsApp oficial for conectado.</div>
     </aside>
     <main>
       <div class="top">
-        <div><h1>Radar de oportunidades</h1><p class="subtitle">Encontrar a empresa certa � s� o come�o. A proposta certa fecha o ciclo.</p></div>
-        <div class="actions"><button class="btn" id="analyzeBtn">? Atualizar an�lise</button><button class="btn primary" id="newCampaign">+ Nova campanha</button></div>
+        <div><h1>Encontre. Qualifique. Venda.</h1><p class="subtitle">Uma opera��o comercial para transformar empresas certas em projetos certos.</p></div>
+        <div class="actions"><button class="btn" id="testWhatsApp">? Testar alerta WPP</button><button class="btn" id="analyzeBtn">? Atualizar an�lise</button><button class="btn primary" id="newCampaign">+ Nova campanha</button></div>
       </div>
       <section class="campaign">
         <div class="campaign-meta"><span class="pill">Em execu��o</span><div><div class="campaign-name" id="campaignName">Oficinas e auto centers - Itaja�</div><div class="campaign-detail" id="campaignDetail">Raio de 20 km � Oferta: site comercial com capta��o</div></div></div>
@@ -106,6 +106,14 @@
         document.querySelector('#priorityMetric').textContent = leads.filter(lead => lead.score >= 75).length;
       }
       document.addEventListener('click', async event => {
+        if (event.target.closest('#testWhatsApp')) {
+          event.preventDefault(); event.stopImmediatePropagation();
+          try {
+            const result = await api('/api/notifications/test', { method: 'POST' });
+            toast(result.sent ? 'Alerta enviado para seu WhatsApp.' : 'Alerta registrado. Falta conectar o WhatsApp oficial.');
+          } catch (error) { toast(error.message); }
+          return;
+        }
         const approve = event.target.closest('#approveBtn');
         if (approve) {
           event.preventDefault(); event.stopImmediatePropagation();
